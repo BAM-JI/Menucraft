@@ -1,6 +1,7 @@
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import AuthHero from "../components/AuthHero";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -8,48 +9,16 @@ function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Panel izquierdo */}
-      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-slate-950 via-slate-800 to-orange-900">
-        <div className="p-10 w-full">
-          <h1 className="text-white text-2xl font-bold">
-            MenuCraft
-          </h1>
-          <div className="mt-32">
-            <h2 className="text-5xl font-bold text-white leading-tight">
-              Tu carta digital,
-              <br />
-              <span className="text-orange-500">
-                en un escaneo.
-              </span>
-            </h2>
-
-            <p className="text-gray-400 mt-6 text-lg">
-              La plataforma de menús QR pensada para restaurantes mexicanos.
-            </p>
-          </div>
-          <div className="mt-10 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded-full border border-orange-500"></div>
-              <span className="text-gray-300">
-                Menú actualizable en tiempo real
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded-full border border-orange-500"></div>
-              <span className="text-gray-300">
-                Códigos QR personalizados para tu marca
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded-full border border-orange-500"></div>
-              <span className="text-gray-300">
-                Compatible con todos los dispositivos
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AuthHero
+        title="Tu carta digital,"
+        highlight="en un escaneo."
+        description="La plataforma de menús QR pensada para restaurantes mexicanos."
+        benefits={[
+          "Menú actualizable en tiempo real",
+          "Códigos QR personalizados para tu marca",
+          "Compatible con todos los dispositivos",
+        ]}
+      />
 
       {/* Panel derecho */}
       <div className="w-full md:w-1/2 bg-gray-100 flex items-center justify-center">
