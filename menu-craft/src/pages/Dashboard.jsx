@@ -9,8 +9,8 @@ function api(path, options = {}) {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
+      Authorization: `Bearer ${token}`  // Dashboard.jsx línea 12
+      
     },
   });
 }

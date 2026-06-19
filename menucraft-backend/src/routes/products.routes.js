@@ -7,9 +7,9 @@ const router = Router();
 
 router.use(verifyToken);
 
-router.get('/',      getProducts);
-router.post('/',     createProduct);
-router.put('/:id',   updateProduct);
-router.delete('/:id', deleteProduct);
+router.get('/',       getProducts);    // GET  /api/products?categoria_id=
+router.post('/',      createProduct);  // POST /api/products
+router.put('/:id',    updateProduct);  // PUT  /api/products/:id
+router.delete('/:id', deleteProduct);  // DELETE /api/products/:id
 
 module.exports = router;

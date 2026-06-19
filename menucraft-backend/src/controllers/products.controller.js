@@ -1,29 +1,51 @@
 // src/controllers/products.controller.js
-// Issue #11 - CRUD de Platillos con restricción multi-tenant
+// CORRECCIÓN: agregado GET /api/products?categoria_id= para que el Dashboard liste platillos
 
 const pool = require('../config/db');
+
+// ─── GET /api/products?categoria_id= ─────────────────────────
+const getProducts = async (req, res) => {
+  const { restaurante_id } = req.usuario;
+  const { categoria_id } = req.query;
+
+  try {
+    let query = `SELECT id, categoria_id, nombre, descripcion, precio, url_foto, disponible
+                 FROM platillos
+                 WHERE restaurante_id = $1`;
+    const params = [restaurante_id];
+
+    // Filtro opcional por categoría
+    if (categoria_id) {
+      query += ` AND categoria_id = $2`;
+      params.push(categoria_id);
+    }
+
+    query += ` ORDER BY nombre ASC`;
+
+    const result = await pool.query(query, params);
+    return res.status(200).json(result.rows);
+  } catch (err) {
+    console.error('[Products] Error en getProducts:', err.message);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
 
 // ─── POST /api/products ───────────────────────────────────────
 const createProduct = async (req, res) => {
   const { categoria_id, nombre, descripcion, precio, url_foto, disponible } = req.body;
   const { restaurante_id } = req.usuario;
 
-  // TC-01: Validar campo obligatorio nombre
   if (!nombre) {
     return res.status(400).json({ error: 'El nombre del platillo es requerido' });
   }
-
-  // TC-02: Validar precio positivo
   if (!precio || parseFloat(precio) < 0) {
     return res.status(400).json({ error: 'El precio debe ser un valor positivo' });
   }
-
   if (!categoria_id) {
     return res.status(400).json({ error: 'La categoría es requerida' });
   }
 
   try {
-    // Verificar que la categoría pertenece al restaurante (multi-tenant)
     const catCheck = await pool.query(
       'SELECT id FROM categorias WHERE id = $1 AND restaurante_id = $2',
       [categoria_id, restaurante_id]
@@ -60,13 +82,11 @@ const updateProduct = async (req, res) => {
   const { nombre, descripcion, precio, url_foto, disponible, categoria_id } = req.body;
   const { restaurante_id } = req.usuario;
 
-  // TC-02: Validar precio si se envía
   if (precio !== undefined && parseFloat(precio) < 0) {
     return res.status(400).json({ error: 'El precio debe ser un valor positivo' });
   }
 
   try {
-    // WHERE incluye restaurante_id → aislamiento multi-tenant (TC-04)
     const result = await pool.query(
       `UPDATE platillos
        SET nombre       = COALESCE($1, nombre),
@@ -80,7 +100,6 @@ const updateProduct = async (req, res) => {
        RETURNING *`,
       [nombre, descripcion, precio, url_foto, disponible, categoria_id, id, restaurante_id]
     );
-
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Platillo no encontrado' });
     }
@@ -98,48 +117,15 @@ const deleteProduct = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `DELETE FROM platillos
-       WHERE id = $1 AND restaurante_id = $2
-       RETURNING id`,
+      `DELETE FROM platillos WHERE id = $1 AND restaurante_id = $2 RETURNING id`,
       [id, restaurante_id]
     );
-
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Platillo no encontrado' });
     }
     return res.status(200).json({ message: 'Platillo eliminado exitosamente' });
   } catch (err) {
     console.error('[Products] Error en deleteProduct:', err.message);
-    return res.status(500).json({ error: 'Error interno del servidor' });
-  }
-};
-
-// ─── GET /api/products ────────────────────────────────────────
-const getProducts = async (req, res) => {
-  const { restaurante_id } = req.usuario;
-  const { categoria_id } = req.query;
-
-  try {
-    let query = `
-      SELECT p.id, p.categoria_id, c.nombre AS categoria_nombre,
-             p.nombre, p.descripcion, p.precio, p.url_foto, p.disponible, p.updated_at
-      FROM platillos p
-      JOIN categorias c ON c.id = p.categoria_id
-      WHERE p.restaurante_id = $1
-    `;
-    const params = [restaurante_id];
-
-    if (categoria_id) {
-      query += ' AND p.categoria_id = $2';
-      params.push(categoria_id);
-    }
-
-    query += ' ORDER BY c.orden ASC, c.nombre ASC, p.nombre ASC';
-
-    const result = await pool.query(query, params);
-    return res.status(200).json(result.rows);
-  } catch (err) {
-    console.error('[Products] Error en getProducts:', err.message);
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };

@@ -5,12 +5,11 @@ const { getCategories, createCategory, updateCategory, deleteCategory } = requir
 
 const router = Router();
 
-// Todas las rutas requieren JWT
 router.use(verifyToken);
 
-router.get('/',      getCategories);
-router.post('/',     createCategory);
-router.put('/:id',   updateCategory);
-router.delete('/:id', deleteCategory);
+router.get('/',       getCategories);   // GET  /api/categories
+router.post('/',      createCategory);  // POST /api/categories
+router.put('/:id',    updateCategory);  // PUT  /api/categories/:id
+router.delete('/:id', deleteCategory);  // DELETE /api/categories/:id
 
 module.exports = router;
