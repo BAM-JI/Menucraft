@@ -1,12 +1,8 @@
-// src/config/db.js
 const { Pool } = require('pg');
 
+// Usamos directamente la URL completa para evitar errores de mapeo en producción
 const pool = new Pool({
-  host:     process.env.DB_HOST,
-  port:     parseInt(process.env.DB_PORT) || 5432,
-  user:     process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false  // Necesario para Supabase en producción
   }
