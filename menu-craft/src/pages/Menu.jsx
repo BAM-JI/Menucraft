@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { UtensilsCrossed, AlertCircle } from "lucide-react";
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+
 function Menu() {
   const { slug } = useParams();
   const [menu, setMenu] = useState(null);
@@ -14,7 +16,7 @@ function Menu() {
       setError(null);
 
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/menu/${slug}`);
+        const res = await fetch(`${API_URL}/api/menu/${slug}`);
         const data = await res.json();
 
         if (!res.ok) {
