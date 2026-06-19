@@ -1,17 +1,17 @@
 // src/config/db.js
-// Issue #9 - Configuración del pool de conexiones a PostgreSQL
-
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  host:     process.env.DB_HOST     || 'localhost',
+  host:     process.env.DB_HOST,
   port:     parseInt(process.env.DB_PORT) || 5432,
-  user:     process.env.DB_USER     || 'menucraft_user',
-  password: process.env.DB_PASS     || 'menucraft_password',
-  database: process.env.DB_NAME     || 'menucraft_db',
+  user:     process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false  // Necesario para Supabase en producción
+  }
 });
 
-// Verificar conexión al arrancar
 pool.connect((err, client, release) => {
   if (err) {
     console.error('[DB] Error conectando a PostgreSQL:', err.message);
