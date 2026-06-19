@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const REQUIRED_VARS = ['JWT_SECRET', 'DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME'];
+const REQUIRED_VARS = ['JWT_SECRET', 'DATABASE_URL'];
 const missing = REQUIRED_VARS.filter(v => !process.env[v]);
 
 if (missing.length > 0) {
